@@ -10,3 +10,10 @@
 # rspec failure tracking
 .rspec_status
 Gemfile.lock
+
+# C extension build files
+*.o
+*.so
+*.bundle
+Makefile
+mkmf.log

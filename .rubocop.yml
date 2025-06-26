@@ -1,4 +1,5 @@
 AllCops:
+  NewCops: enable
   TargetRubyVersion: 3.1
 
 Style/StringLiterals:
@@ -6,3 +7,35 @@ Style/StringLiterals:
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
+
+# Allow longer methods for crypto implementations
+Metrics/MethodLength:
+  Max: 20
+
+# Allow higher complexity for crypto algorithms
+Metrics/AbcSize:
+  Max: 25
+
+# Allow longer blocks in specs
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+# Allow short parameter names in math functions
+Naming/MethodParameterName:
+  AllowedNames:
+    - x
+    - y
+    - a
+    - m
+    - e
+    - d
+    - n
+    - k
+
+# Disable documentation requirement for inner classes
+Style/Documentation:
+  Exclude:
+    - 'lib/ote/curve25519.rb'
+    - 'lib/ote/simple_ot.rb'
+    - 'lib/ote/oblivious_transfer.rb'
