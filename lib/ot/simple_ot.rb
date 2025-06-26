@@ -8,6 +8,7 @@ module OT
   # Simple RSA-based 1-out-of-2 Oblivious Transfer implementation
   # This is for educational purposes only - not cryptographically secure
   class SimpleOT
+    # Sender side of the RSA-based oblivious transfer protocol
     class Sender
       def initialize
         @messages = nil
@@ -71,6 +72,7 @@ module OT
       end
     end
 
+    # Receiver side of the RSA-based oblivious transfer protocol
     class Receiver
       def initialize(choice)
         raise "Choice must be 0 or 1" unless [0, 1].include?(choice)
