@@ -4,7 +4,7 @@ require "openssl"
 require "securerandom"
 require "digest"
 
-module Ote
+module OT
   # Simple RSA-based 1-out-of-2 Oblivious Transfer implementation
   # This is for educational purposes only - not cryptographically secure
   class SimpleOT

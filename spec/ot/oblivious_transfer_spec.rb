@@ -2,40 +2,40 @@
 
 require "spec_helper"
 
-RSpec.describe Ote::ObliviousTransfer do
+RSpec.describe OT::ObliviousTransfer do
   describe "1-out-of-2 Oblivious Transfer" do
     let(:message0) { "Secret message 0" }
     let(:message1) { "Secret message 1" }
 
     it "can perform complete OT protocol with choice 0" do
-      result = Ote.simple_ot(message0, message1, 0)
+      result = OT.simple_ot(message0, message1, 0)
       expect(result).to eq(message0)
     end
 
     it "can perform complete OT protocol with choice 1" do
-      result = Ote.simple_ot(message0, message1, 1)
+      result = OT.simple_ot(message0, message1, 1)
       expect(result).to eq(message1)
     end
 
     it "sender can be instantiated" do
-      sender = Ote.sender
-      expect(sender).to be_a(Ote::ObliviousTransfer::Sender)
+      sender = OT.sender
+      expect(sender).to be_a(OT::ObliviousTransfer::Sender)
     end
 
     it "receiver can be instantiated with choice" do
-      receiver = Ote.receiver(0)
-      expect(receiver).to be_a(Ote::ObliviousTransfer::Receiver)
+      receiver = OT.receiver(0)
+      expect(receiver).to be_a(OT::ObliviousTransfer::Receiver)
     end
 
     it "receiver rejects invalid choices" do
       expect do
-        Ote.receiver(2)
+        OT.receiver(2)
       end.to raise_error("Choice must be 0 or 1")
     end
   end
 
   describe "Sender class" do
-    let(:sender) { Ote::ObliviousTransfer::Sender.new }
+    let(:sender) { OT::ObliviousTransfer::Sender.new }
 
     it "can set messages" do
       expect do
@@ -57,11 +57,11 @@ RSpec.describe Ote::ObliviousTransfer do
   end
 
   describe "Receiver class" do
-    let(:receiver) { Ote::ObliviousTransfer::Receiver.new(0) }
+    let(:receiver) { OT::ObliviousTransfer::Receiver.new(0) }
     let(:sender_params) do
       {
-        public_key: Ote::Curve25519::GENERATOR.to_base64,
-        generator: Ote::Curve25519::GENERATOR.to_base64
+        public_key: OT::Curve25519::GENERATOR.to_base64,
+        generator: OT::Curve25519::GENERATOR.to_base64
       }
     end
 

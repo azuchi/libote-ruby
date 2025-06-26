@@ -3,7 +3,7 @@
 require "securerandom"
 require "digest"
 
-module Ote
+module OT
   module Curve25519
     # Curve25519 parameters
     P = (2**255) - 19

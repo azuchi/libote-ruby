@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/ote/version"
+require_relative "lib/ot/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "ote"
-  spec.version = Ote::VERSION
+  spec.name = "oblivious-transfer"
+  spec.version = OT::VERSION
   spec.authors = ["azuchi"]
   spec.email = ["azuchi@chaintope.com"]
 

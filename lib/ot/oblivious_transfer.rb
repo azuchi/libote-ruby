@@ -2,7 +2,7 @@
 
 require_relative "curve25519"
 
-module Ote
+module OT
   # Simple 1-out-of-2 Oblivious Transfer implementation
   # Based on elliptic curve cryptography
   class ObliviousTransfer

@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in ote.gemspec
+# Specify your gem's dependencies in oblivious-transfer.gemspec
 gemspec
 
 gem "rake", "~> 13.0"

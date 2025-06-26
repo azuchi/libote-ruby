@@ -1,13 +1,13 @@
-# Ote
+# OT
 
-Pure Ruby implementation of Oblivious Transfer (OT) protocols. This library provides 1-out-of-2 Oblivious Transfer implementations using both elliptic curve cryptography and RSA-based approaches.
+Pure Ruby implementation of Oblivious Transfer (OT) protocols. This library provides both basic 1-out-of-2 Oblivious Transfer and OT Extension implementations for efficient batch operations.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'ote'
+gem 'oblivious-transfer', require: 'ot'
 ```
 
 And then execute:
@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install ote
+    $ gem install oblivious-transfer
 
 ## Usage
 
@@ -25,7 +25,7 @@ Or install it yourself as:
 The simplest way to use the library is with the `simple_ot` method:
 
 ```ruby
-require 'ote'
+require 'ot'
 
 # Messages for the OT protocol
 message0 = "Secret message 0"
@@ -35,7 +35,7 @@ message1 = "Secret message 1"
 choice = 1
 
 # Perform the OT protocol
-chosen_message = Ote.simple_ot(message0, message1, choice)
+chosen_message = OT.simple_ot(message0, message1, choice)
 puts chosen_message  # => "Secret message 1"
 ```
 
@@ -44,11 +44,11 @@ puts chosen_message  # => "Secret message 1"
 For more control, you can use the RSA-based implementation directly:
 
 ```ruby
-require 'ote'
+require 'ot'
 
 # Create sender and receiver
-sender = Ote.simple_sender
-receiver = Ote.simple_receiver(1)  # choice = 1
+sender = OT.simple_sender
+receiver = OT.simple_receiver(1)  # choice = 1
 
 # Sender sets the two messages
 sender.set_messages("First option", "Second option")
@@ -67,11 +67,11 @@ puts chosen_message  # => "Second option"
 The library also includes an elliptic curve implementation:
 
 ```ruby
-require 'ote'
+require 'ot'
 
 # Create sender and receiver
-sender = Ote.sender
-receiver = Ote.receiver(0)  # choice = 0
+sender = OT.sender
+receiver = OT.receiver(0)  # choice = 0
 
 # Sender sets the two messages
 sender.set_messages("Option A", "Option B")
@@ -83,6 +83,58 @@ sender_response = sender.process_choice(receiver_public_key, {})
 chosen_message = receiver.decrypt_message(sender_response)
 
 puts chosen_message  # => "Option A"
+```
+
+### OT Extension (Batch OT)
+
+For efficient batch operations, use OT Extension which allows performing many OTs with the cost of only a few base OTs:
+
+```ruby
+require 'ot'
+
+# Prepare multiple message pairs
+message_pairs = [
+  ["Database record 1A", "Database record 1B"],
+  ["Database record 2A", "Database record 2B"],
+  ["Database record 3A", "Database record 3B"],
+  ["Database record 4A", "Database record 4B"]
+]
+
+# Receiver's choices for each pair
+choices = [0, 1, 0, 1]
+
+# Perform batch OT extension
+results = OT.extension(message_pairs, choices)
+
+puts results[0]  # => "Database record 1A" (choice 0)
+puts results[1]  # => "Database record 2B" (choice 1)
+puts results[2]  # => "Database record 3A" (choice 0)
+puts results[3]  # => "Database record 4B" (choice 1)
+```
+
+#### Advanced OT Extension Usage
+
+```ruby
+require 'ot'
+
+# Create sender and receiver for manual control
+sender = OT.extension_sender
+receiver = OT.extension_receiver([0, 1, 0])
+
+# Set up the message pairs
+message_pairs = [
+  ["Option 1A", "Option 1B"],
+  ["Option 2A", "Option 2B"], 
+  ["Option 3A", "Option 3B"]
+]
+sender.set_message_pairs(message_pairs)
+
+# Execute the extension protocol
+receiver_choices = receiver.get_choices
+sender_response = sender.extend_ots(receiver_choices)
+results = receiver.receive_extended_ots(sender_response)
+
+puts results  # => ["Option 1A", "Option 2B", "Option 3A"]
 ```
 
 ## How Oblivious Transfer Works
@@ -97,18 +149,41 @@ puts chosen_message  # => "Option A"
 
 ## Implementation Details
 
-This library provides two OT implementations:
+This library provides multiple OT implementations:
 
-### RSA-based Implementation (`SimpleOT`)
+### Basic OT Implementations
+
+#### RSA-based Implementation (`SimpleOT`)
 - Uses RSA encryption with 2048-bit keys
 - Based on the classic RSA-based OT protocol
-- Default implementation used by `Ote.simple_ot()`
+- Default implementation used by `OT.simple_ot()`
 - More straightforward and reliable
 
-### Elliptic Curve Implementation (`ObliviousTransfer`)
+#### Elliptic Curve Implementation (`ObliviousTransfer`)
 - Uses Curve25519 elliptic curve cryptography
 - Custom elliptic curve point and scalar arithmetic
 - Alternative implementation for educational purposes
+
+### OT Extension Implementation (`Extension`)
+
+The OT extension allows performing many OTs efficiently:
+
+- **Based on**: IKNP (Ishai-Kilian-Nissim-Petrank) OT extension
+- **Security Parameter**: 128 base OTs for security
+- **Correlation-Robust Hash**: SHA256-based hash function
+- **Efficiency**: O(n) communication for n OTs vs O(n·k) for n independent base OTs
+
+#### Key Features:
+- **Batch Processing**: Handle thousands of OTs efficiently
+- **Scalability**: Linear cost in the number of OTs
+- **Security**: Maintains the same security properties as base OT
+- **Flexibility**: Works with any secure base OT implementation
+
+#### Use Cases:
+- Private Set Intersection (PSI)
+- Multi-Party Computation (MPC)  
+- Private Information Retrieval (PIR)
+- Secure Database Queries
 
 ## Development
 
@@ -123,14 +198,6 @@ Run the test suite with:
 ```bash
 bundle exec rspec
 ```
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/ote.
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 
 ## Security Notice
 
